@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": ["version", "tasks"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "The version number of this configuration",
+      "enum": ["0.0.1"]
+    },
+    "tasks": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/definitions/task" }
+    }
+  },
+  "definitions": {
+    "task": {
+      "type": "object",
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "commands": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/command" }
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "requires": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "command": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
