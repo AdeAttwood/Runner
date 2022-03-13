@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push: { branches: ["0.x"] }
+  pull_request: { branches: ["0.x"] }
+
+jobs:
+  commits:
+    name: Commitlint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1000
+
+      - name: Lint commits
+        uses: docker://registry.k1.zportal.co.uk/practically-oss/conventional-tools:0.x
+        with:
+          args: conventional-tools commitlint -l1
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.17"
+
+      - name: Install goimports
+        run: go install golang.org/x/tools/cmd/goimports@latest
+
+      - name: Lint the code
+        run: test -z "$(goimports -d .)"
+
+  test:
+    name: Test GO ${{ matrix.go-versions }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: { go-versions: ["1.16", "1.17"] }
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-versions }}
+
+      - name: Run the tests
+        run: go test ./...
